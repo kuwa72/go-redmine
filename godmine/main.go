@@ -695,6 +695,21 @@ func editWikiPage(title string) error {
 	return nil
 }
 
+func listIssuePriorities() {
+	c := redmine.NewClient(conf.Endpoint, conf.Apikey)
+	issuePriorities, err := c.IssuePriorities()
+	if err != nil {
+		fatal("Failed to list issue_priorities: %s\n", err)
+	}
+	for _, i := range issuePriorities {
+		var str = ""
+		if i.IsDefault {
+			str = "Default"
+		}
+		fmt.Printf("%4d: %s %s\n", i.Id, i.Name, str)
+	}
+}
+
 func usage() {
 	fmt.Println(`godmine <command> <subcommand> [arguments]
 
@@ -1026,6 +1041,15 @@ func main() {
 		default:
 			usage()
 
+		}
+
+	case "e", "enum", "enumerations":
+		switch flag.Arg(1) {
+		case "issue_priorities":
+			listIssuePriorities();
+			break
+		default:
+			usage()
 		}
 	default:
 		usage()

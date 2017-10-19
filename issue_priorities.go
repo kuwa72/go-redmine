@@ -39,3 +39,17 @@ func (c *Client) IssuePriorities() ([]IssuePriority, error) {
 	}
 	return r.IssuePriorities, nil
 }
+
+func (c *Client) DefaultIssuePrioritiy() (*IssuePriority, error) {
+	priorities, err := c.IssuePriorities()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, p := range priorities {
+		if p.IsDefault {
+			return &p, nil
+		}
+	}
+	return nil, errors.New("Default issue priority is not setted")
+}
